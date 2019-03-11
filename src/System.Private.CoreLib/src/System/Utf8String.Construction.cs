@@ -5,6 +5,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Unicode;
 
 namespace System
 {
@@ -64,11 +65,9 @@ namespace System
                 return Empty;
             }
 
-            // TODO: Validate for well-formedness.
-
             Utf8String newString = FastAllocate(value.Length);
             Buffer.Memmove(ref newString.DangerousGetMutableReference(), ref MemoryMarshal.GetReference(value), (uint)value.Length);
-            return newString;
+            return Utf8Utility.ValidateAndFixupUtf8String(newString);
         }
 
         /// <summary>
@@ -212,6 +211,22 @@ namespace System
         /*
          * HELPER METHODS
          */
+
+        /// <summary>
+        /// Creates a <see cref="Utf8String"/> instance from existing data, bypassing validation.
+        /// Also allows the caller to set flags dictating various attributes of the data.
+        /// </summary>
+        internal static Utf8String DangerousCreateWithoutValidation(ReadOnlySpan<byte> utf8Data, bool assumeWellFormed = false, bool assumeAscii = false)
+        {
+            if (utf8Data.IsEmpty)
+            {
+                return Empty;
+            }
+
+            Utf8String newString = FastAllocate(utf8Data.Length);
+            utf8Data.CopyTo(new Span<byte>(ref newString.DangerousGetMutableReference(), newString.Length));
+            return newString;
+        }
 
         /// <summary>
         /// Creates a new zero-initialized instance of the specified length. Actual storage allocated is "length + 1" bytes
