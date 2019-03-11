@@ -4899,11 +4899,6 @@ HCIMPL1(void, IL_Throw,  Object* obj)
     }
     else
     {   // We know that the object derives from System.Exception
-        if (g_CLRPolicyRequested &&
-            oref->GetMethodTable() == g_pOutOfMemoryExceptionClass)
-        {
-            EEPolicy::HandleOutOfMemory();
-        }
 
         // If the flag indicating ForeignExceptionRaise has been set,
         // then do not clear the "_stackTrace" field of the exception object.
@@ -4953,12 +4948,6 @@ HCIMPL0(void, IL_Rethrow)
     OBJECTREF throwable = GetThread()->GetThrowable();
     if (throwable != NULL)
     {
-        if (g_CLRPolicyRequested &&
-            throwable->GetMethodTable() == g_pOutOfMemoryExceptionClass)
-        {
-            EEPolicy::HandleOutOfMemory();
-        }
-
         RaiseTheExceptionInternalOnly(throwable, TRUE);
     }
     else
