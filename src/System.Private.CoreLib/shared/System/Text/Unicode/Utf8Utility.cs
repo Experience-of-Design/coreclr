@@ -46,6 +46,12 @@ namespace System.Text.Unicode
         }
 
 #if FEATURE_UTF8STRING
+        /// <summary>
+        /// Returns <paramref name="value"/> if it is null or contains only well-formed UTF-8 data;
+        /// otherwises allocates a new <see cref="Utf8String"/> instance containing the same data as
+        /// <paramref name="value"/> but where all invalid UTF-8 sequences have been replaced
+        /// with U+FFD.
+        /// </summary>
         public static Utf8String ValidateAndFixupUtf8String(Utf8String value)
         {
             if (Utf8String.IsNullOrEmpty(value))

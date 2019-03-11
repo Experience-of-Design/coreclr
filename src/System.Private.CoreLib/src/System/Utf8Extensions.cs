@@ -2,16 +2,22 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Text;
+using System.Runtime.InteropServices;
 using Internal.Runtime.CompilerServices;
 
 namespace System
 {
     public static class Utf8Extensions
     {
+        /// <summary>
+        /// Projects <paramref name="text"/> as a <see cref="ReadOnlySpan{Byte}"/>.
+        /// </summary>
+        public static ReadOnlySpan<byte> AsBytes(this ReadOnlySpan<Char8> text)
+        {
+            return MemoryMarshal.Cast<Char8, byte>(text);
+        }
+
         /// <summary>
         /// Creates a new readonly span over the portion of the target <see cref="Utf8String"/>.
         /// </summary>
